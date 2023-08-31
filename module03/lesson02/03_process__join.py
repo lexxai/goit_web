@@ -10,6 +10,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 r1 = 9999
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s PID:%(process)d  [ %(threadName)s ] %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+r1 = 9999
 
 def info(title):
     logger.info(f"function info {r1=}")
@@ -19,6 +27,13 @@ def info(title):
     print(' process id:', os.getpid())
 
 def example_work(params):
+    global r1
+    logger.info(f"A function example_work, {r1=}")
+    r1 = 111111111111111111
+    logger.info(f"B function example_work, {r1=}")
+    print('[example_work] module name:', __name__)
+    print(' parent process:', os.getppid())
+    print(' process id:', os.getpid())
     global r1
     logger.info(f"A function example_work, {r1=}")
     r1 = 111111111111111111
@@ -37,7 +52,15 @@ if __name__ == '__main__':
     print('[root] module name:', __name__)
     print(' parent process:', os.getppid())
     print(' process id:', os.getpid())
+    logger.info(f"root  {r1=}")
+    print('[root] module name:', __name__)
+    print(' parent process:', os.getppid())
+    print(' process id:', os.getpid())
     prs = []
+    for i in range(1):
+        r1 = r1 + (i+1)*10
+        print(f"for: {r1}")
+        pr = Process(target=example_work, args=(f"Count process - {r1=}  {i}",))  # daemon=True
     for i in range(1):
         r1 = r1 + (i+1)*10
         print(f"for: {r1}")
