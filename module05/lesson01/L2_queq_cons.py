@@ -5,6 +5,7 @@ import asyncio
 from pathlib import Path
 import random
 
+
 # set a random seed for reproducibility
 random.seed(2023)
 
@@ -15,11 +16,12 @@ async def producer_filelist(filelist: list[Path], queue: asyncio.Queue):
         print(f"Producer added {i}: {item.name} to queue", queue.qsize())
 
 # Create a coroutine that consumes items from a queue
-async def copy_file(name, queue, counter):
+async def copy_file(name, queue: asyncio.Queue, counter: dict, lock: asyncio.Lock):
     while True:
         # Get an item from the queue
         item = await queue.get()
-        counter['copy_file'] += 1
+        async with lock:
+            counter['copy_file'] += 1
         # Simulate some delay
         # await asyncio.sleep(random.randrange(0,1))
         print(f"copy_file {name} got {item.name} from queue", queue.qsize(), counter)
@@ -34,14 +36,16 @@ async def copy_file(name, queue, counter):
 async def main():
     # Create a queue that can hold up to 20 items
     queue: asyncio.Queue = asyncio.Queue(20)
+    lock = asyncio.Lock()
 
     filelist = list(Path("../..").glob("**\*.*"))
 
     print(len(filelist))
     counter = {"copy_file": 0}
+
     # Create 3 producer and 5 consumer coroutines
     tasks_producer_filelist = [ asyncio.create_task(producer_filelist(filelist, queue)) ]
-    tasks_copy_file = [ asyncio.create_task(copy_file(n, queue, counter)) for n in range(10) ]
+    tasks_copy_file = [ asyncio.create_task(copy_file(n, queue, counter, lock)) for n in range(10) ]
 
     # Wait for all producers to finish
     await asyncio.gather(*tasks_producer_filelist)
