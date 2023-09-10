@@ -33,7 +33,7 @@ async def copy_file(name, queue, counter):
 
 async def main():
     # Create a queue that can hold up to 20 items
-    queue: asyncio.Queue = asyncio.Queue()
+    queue: asyncio.Queue = asyncio.Queue(20)
 
     filelist = list(Path("../..").glob("**\*.*"))
 
