@@ -43,7 +43,7 @@ def example_work(params):
     print(' process id:', os.getpid())
     sleep(0.5)
     print(params)
-    info('**** function example_work *****') # Process ID
+    # info('function example_work') # Process ID
     sys.exit(0)
 
 

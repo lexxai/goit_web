@@ -2,7 +2,7 @@ import logging
 
 from psycopg2 import DatabaseError
 
-from lesson02.connection import create_connection
+from connection import create_connection
 
 if __name__ == '__main__':
     sql_expression_all = "SELECT * FROM users WHERE id = %s"
@@ -23,7 +23,7 @@ if __name__ == '__main__':
                 try:
                     # cur.execute(sql_expression_all, (4, ))
                     # cur.execute(sql_expression_custom_field)
-                    cur.execute(sql_expression_regex)
+                    cur.execute(sql_expression_custom_field)
                     # print(cur.fetchone())
                     print(cur.fetchall())
                     conn.commit()
